@@ -1,0 +1,53 @@
+import secrets
+import string
+
+
+class PasswordGenerator:
+   
+
+    def __init__(self, length=12, use_symbols=True):
+        if length < 6:
+            raise ValueError("Password length must be at least 6 characters")
+
+        self.length = length
+        self.use_symbols = use_symbols
+
+        self.lower = string.ascii_lowercase
+        self.upper = string.ascii_uppercase
+        self.digits = string.digits
+        self.symbols = string.punctuation if use_symbols else ""
+
+    def generate(self):
+       
+        required_chars = [
+            secrets.choice(self.lower),
+            secrets.choice(self.upper),
+            secrets.choice(self.digits)
+        ]
+
+        if self.use_symbols:
+            required_chars.append(secrets.choice(self.symbols))
+
+       
+        all_chars = self.lower + self.upper + self.digits + self.symbols
+        remaining_length = self.length - len(required_chars)
+
+        password_chars = required_chars + [
+            secrets.choice(all_chars) for _ in range(remaining_length)
+        ]
+        secrets.SystemRandom().shuffle(password_chars)
+
+        return ''.join(password_chars)
+
+
+if __name__ == "__main__":
+    try:
+        length = int(input("Enter password length (>=6): "))
+        generator = PasswordGenerator(length=length, use_symbols=True)
+        password = generator.generate()
+
+        print("\nGenerated secure password:")
+        print(password)
+
+    except ValueError as e:
+        print("Error:", e)
